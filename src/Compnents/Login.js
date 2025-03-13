@@ -3,14 +3,13 @@ import Header from "./Header";
 import { checkValidData } from "../Util/validate";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../Util/Firebase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../Util/userSlice";
+import { USER_AVATAR } from "../Util/constants";
 
 const Login = () => {
     const [isSignInForm, setISignInForm]= useState(true);
     const [errorMessage, setErrorMessage]= useState(null);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
 
@@ -35,12 +34,12 @@ const Login = () => {
             .then((userCredential) => {
             const user = userCredential.user;
             updateProfile(user, {
-                displayName: Name.current.value, photoURL: "https://avatars.fastly.steamstatic.com/2137353e8e5bc7faa85899b61e467cc8d2cb5ac9_full.jpg"
+                displayName: Name.current.value, photoURL: {USER_AVATAR}
               }).then(() => {
                           const {uid, email, displayName, photoUR} = auth.currentUser;
                           dispatch(addUser({uid: uid, email: email, displayName: displayName, photoUR: photoUR}));
                  
-                navigate("/browse")
+                
               }).catch((error) => {
                 setErrorMessage(error.message);
 
@@ -65,8 +64,7 @@ const Login = () => {
        .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
-    console.log(user);
-    navigate("/browse")
+
   })
   .catch((error) => {
     const errorCode = error.code;
